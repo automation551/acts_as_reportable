@@ -295,8 +295,10 @@ module Ruport
           data_records.first[m] = send(method)
         end
         
-        # Reorder columns to match options[:only]
-        if Array === options[:only]
+        # Reorder columns to match options[:only]. But do not add
+        # column names of association names to self.class.aar_columns
+        # - that is handled elsewhere.
+        if Array === options[:only] and !options[:qualify_attribute_names]
           cols = options[:only].map {|c| c.to_s }
           self.class.aar_columns = cols
         end
