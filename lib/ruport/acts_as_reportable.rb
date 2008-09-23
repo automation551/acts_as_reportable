@@ -219,19 +219,13 @@ module Ruport
       def get_include_for_find(report_option)
         includes = report_option.blank? ? aar_options[:include] : report_option
         if includes.is_a?(Hash)
-          result = {}
-          includes.each do |k,v|
-            if v.empty? || !v[:include]
-              result.merge!(k => {})
+          includes.map do |k,v|
+            if v.empty? or (v.is_a?(Hash) and !v[:include])
+              k
             else
-              result.merge!(k => get_include_for_find(v[:include]))
+              { k => get_include_for_find(v[:include]) }
             end
           end
-          result
-        elsif includes.is_a?(Array)
-          result = {}
-          includes.each {|i| result.merge!(i => {}) }
-          result
         else
           includes
         end
